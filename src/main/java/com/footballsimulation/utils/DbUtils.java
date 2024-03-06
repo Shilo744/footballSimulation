@@ -1,13 +1,13 @@
-package com.ashcollege.utils;
+package com.footballsimulation.utils;
 
 
-import com.ashcollege.entities.Product;
-import com.ashcollege.entities.User;
+import com.footballsimulation.entities.User;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Component
@@ -23,7 +23,7 @@ public class DbUtils {
     private void createDbConnection(String username, String password){
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ash2024", username, password);
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/footballSimulation", username, password);
             System.out.println("Connection successful!");
             System.out.println();
         }catch (Exception e){
@@ -32,27 +32,35 @@ public class DbUtils {
     }
 
     public boolean checkIfUsernameAvailable (String username) {
-        boolean available = false;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT username FROM users WHERE username = ?");
-            preparedStatement.setString(1,username);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (!resultSet.next()) {
-                 available = true;
+//        try {
+//            PreparedStatement preparedStatement = connection.prepareStatement("SELECT username FROM users WHERE username = ?");
+//            preparedStatement.setString(1,username);
+//            ResultSet resultSet = preparedStatement.executeQuery();
+//            while (!resultSet.next()) {
+//                available = true;
+//            }
+//        }catch (SQLException e){
+//            e.printStackTrace();
+//        }
+        ArrayList<User>users= (ArrayList<User>) getAllUsers();
+        for (User user:users) {
+            if(user.getUsername().equals(username)){
+                return false;
             }
-        }catch (SQLException e){
-            e.printStackTrace();
         }
-        return available;
+        return true;
     }
 
     public boolean addUser (User user) {
         boolean success = false;
+        boolean check=checkIfUsernameAvailable(user.getUsername());
         try {
-            if (checkIfUsernameAvailable(user.getUsername())) {
-                PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO users (username, password) VALUES ( ? , ? )");
+            if (check) {
+                PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO users (username, password, email, balance) VALUES ( ? , ? , ? , ?)");
                 preparedStatement.setString(1, user.getUsername());
                 preparedStatement.setString(2, user.getPassword());
+                preparedStatement.setString(3, user.getEmail());
+                preparedStatement.setFloat(4, user.getBalance());
                 preparedStatement.executeUpdate();
                 success = true;
             }
@@ -71,7 +79,9 @@ public class DbUtils {
                 int id = resultSet.getInt("id");
                 String username = resultSet.getString("username");
                 String password = resultSet.getString("password");
-                User user = new User(id, username,password);
+                String email = resultSet.getString("email");
+                float balance = resultSet.getFloat("balance");
+                User user = new User(id,username,password,email,balance);
                 allUsers.add(user);
             }
 
@@ -81,18 +91,6 @@ public class DbUtils {
         return allUsers;
     }
 
-    public void addProduct(Product product) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO product (description, price, count) VALUES ( ? , ? , ?)");
-            preparedStatement.setString(1, product.getDescription());
-            preparedStatement.setFloat(2, product.getPrice());
-            preparedStatement.setInt(3, product.getCount());
-            preparedStatement.executeUpdate();
-
-        }catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
     /*public boolean checkCredentials (String username, String password) {
         boolean ok = false;
@@ -107,45 +105,20 @@ public class DbUtils {
         User user = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT id, secret FROM users WHERE username = ? AND password = ? ");
+                    "SELECT id FROM users WHERE username = ? AND password = ? ");
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, password);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 int id = resultSet.getInt("id");
-                String secret = resultSet.getString("secret");
                 user = new User();
                 user.setId(id);
-                user.setSecret(secret);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return user;
 
-    }
-
-    public List<Product> getProductsByUserSecret (String secret) {
-        List<Product> products = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT p.description, p.price " +
-                            "FROM users u INNER JOIN users_products_map upm ON u.id = upm.user_id " +
-                            "INNER JOIN products p ON upm.product_id = p.id " +
-                            "WHERE u.secret = ?"
-            );
-            preparedStatement.setString(1, secret);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                String description = resultSet.getString(1);
-                float price = resultSet.getFloat(2);
-                Product product = new Product(description, price, 0);
-                products.add(product);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return products;
     }
 
     public User getUserBySecret (String secret) {

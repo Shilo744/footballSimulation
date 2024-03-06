@@ -1,10 +1,5 @@
-package com.ashcollege;
-
-
-import com.ashcollege.entities.Client;
-import com.ashcollege.entities.Note;
-import com.ashcollege.entities.User;
-import com.github.javafaker.Faker;
+package com.footballsimulation;
+import com.footballsimulation.entities.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Transactional
@@ -26,7 +22,8 @@ public class Persist {
 
     private final SessionFactory sessionFactory;
 
-
+    private static final String EMAIL_REGEX =
+            "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
 
 
 
@@ -42,22 +39,15 @@ public class Persist {
     public void save(Object object) {
         this.sessionFactory.getCurrentSession().saveOrUpdate(object);
     }
-//
+    //
     public <T> T loadObject(Class<T> clazz, int oid) {
         return this.getQuerySession().get(clazz, oid);
     }
-//
+    //
     public <T> List<T> loadList(Class<T> clazz) {
-        return  this.sessionFactory.getCurrentSession().createQuery("FROM Client").list();
+        return  this.sessionFactory.getCurrentSession().createQuery("FROM User").list();
     }
 
-    public Client getClientByFirstName (String firstName) {
-        return (Client) this.sessionFactory.getCurrentSession().createQuery(
-                "FROM Client WHERE firstName = :firstName ")
-                .setParameter("firstName", firstName)
-                .setMaxResults(1)
-                .uniqueResult();
-    }
 
     public User login (String username, String password) {
         return (User) this.sessionFactory.getCurrentSession()
@@ -68,20 +58,20 @@ public class Persist {
                 .uniqueResult();
     }
 
-    public List<Note> getNotes (String secret) {
-        return this.sessionFactory.getCurrentSession()
-                .createQuery("FROM Note WHERE owner.secret = :secret")
-                .setParameter("secret", secret)
-                .setMaxResults(10)
-                .list();
+    public User register (String username, String password, String email) {
+        return (User) this.sessionFactory.getCurrentSession()
+                .createQuery("FROM User WHERE username = :username " +
+                        "AND password = :password AND email = :email")
+                .setParameter("username", username)
+                .setParameter("password", password)
+                .setParameter("email", email)
+                .uniqueResult();
     }
 
-    public List<Note> getNotesByCollegeName (String collegeName) {
-        return this.sessionFactory.getCurrentSession()
-                .createQuery("FROM Note WHERE owner.college.name = :name ")
-                .setParameter("name", collegeName)
-                .setMaxResults(10)
-                .list();
+    public boolean isValidEmail(String email) {
+        Pattern pattern = Pattern.compile(EMAIL_REGEX);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
 

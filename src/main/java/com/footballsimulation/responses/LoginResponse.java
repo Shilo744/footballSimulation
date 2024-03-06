@@ -1,13 +1,11 @@
-package com.ashcollege.responses;
+package com.footballsimulation.responses;
 
 public class LoginResponse extends BasicResponse {
     private int id;
-    private String secret;
 
-    public LoginResponse(boolean success, Integer errorCode, int id, String secret) {
+    public LoginResponse(boolean success, Integer errorCode, int id) {
         super(success, errorCode);
         this.id = id;
-        this.secret = secret;
     }
 
     public LoginResponse(boolean success, Integer errorCode) {
@@ -20,13 +18,5 @@ public class LoginResponse extends BasicResponse {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getSecret() {
-        return secret;
-    }
-
-    public void setSecret(String secret) {
-        this.secret = secret;
     }
 }

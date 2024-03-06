@@ -1,4 +1,4 @@
-package com.ashcollege.utils;
+package com.footballsimulation.utils;
 
 
 public class Constants {

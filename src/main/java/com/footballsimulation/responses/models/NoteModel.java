@@ -1,6 +1,4 @@
-package com.ashcollege.responses.models;
-
-import com.ashcollege.entities.Note;
+package com.footballsimulation.responses.models;
 
 import java.text.SimpleDateFormat;
 
@@ -9,12 +7,12 @@ public class NoteModel {
     private String content;
     private String date;
 
-    public NoteModel (Note note) {
-        this.id = note.getId();
-        this.content = note.getContent();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-        this.date = simpleDateFormat.format(note.getDate());
-    }
+//    public NoteModel (Note note) {
+//        this.id = note.getId();
+//        this.content = note.getContent();
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+//        this.date = simpleDateFormat.format(note.getDate());
+//    }
 
     public int getId() {
         return id;

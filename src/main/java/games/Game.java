@@ -17,12 +17,15 @@ public class Game {
     private int homeScore, guestScore;
     private final byte START_SCORE = 0;
     private int currentTime=30;
+    private int gameId;
+    private boolean gameOver=false;
 
-    public Game(Team home, Team guest) {
+    public Game(int gameId,Team home, Team guest) {
         this.home = home;
         this.guest = guest;
         this.homeScore = START_SCORE;
         this.guestScore = START_SCORE;
+        this.gameId=gameId;
     }
 
     public void gamePhase() {
@@ -34,7 +37,7 @@ public class Game {
             homeChance += random.nextInt(MAX_MORAL_ADD);
             while (currentTime > 0) {
                 sleep(1);
-                printState();
+//                printState();
                 if (random.nextInt(HUNDRED) <= GOAL_CHANCE) {
                     if (homeChance >= random.nextInt(HUNDRED)) {
                         homeScore++;
@@ -45,16 +48,22 @@ public class Game {
                 currentTime--;
             }
 
-            printState();
+//            printState();
 
             switch (gameOver()) {
                 case HOME_WIN -> winner = "Home";
                 case GUEST_WIN -> winner = "Guest";
                 case TIE -> winner = "Tie";
             }
+            gameOver=true;
         }
     }
-
+    public boolean isGameOver(){
+        return gameOver;
+    }
+    public int getGameId(){
+        return gameId;
+    }
     public int getCurrentTime() {
         return currentTime;
     }

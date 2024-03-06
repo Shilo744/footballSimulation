@@ -1,4 +1,4 @@
-package com.ashcollege.responses;
+package com.footballsimulation.responses;
 
 public class BasicResponse {
     private boolean success;

@@ -8,8 +8,9 @@ public class League {
             "St. Louis Cardinals", "Baltimore Orioles", "Atlanta Braves", "Boston Red Sox", "Miami Marlins",
             "New York Yankees", "New York Mets"};
     private Team[] teams;
-    private ArrayList games=new ArrayList();
+    private ArrayList gamesHistory =new ArrayList();
     private Game game;
+    private ArrayList<Game>futureGames=new ArrayList<>();
     public League() {
        makeGames();
     }
@@ -18,21 +19,22 @@ public class League {
         for (int i = 0; i < teams.length; i++) {
             teams[i] = new Team(teamNames[i]);
         }
-        new Thread(()->{
-            for (int i = 0; i < teams.length; i++) {
-                for (int j = 0; j < teams.length; j++) {
-                    if (i != j) {
-//                    System.out.println(teams[i]);
-//                    System.out.println(teams[j]);
-                        game = new Game(teams[i], teams[j]);
-                        game.gamePhase();
-                        games.add(game);
-                        System.out.println(game);
-
-//                    System.out.println(teams[i]);
-//                    System.out.println(teams[j]);
-                    }
+        int id=1;
+        for (int i = 0; i < teams.length; i++) {
+            for (int j = 0; j < teams.length; j++) {
+                if (i != j) {
+                    game = new Game(id,teams[i], teams[j]);
+                    futureGames.add(game);
+                    id++;
                 }
+            }
+        }
+        new Thread(()->{
+            while (!futureGames.isEmpty()) {
+                this.game = futureGames.get(0);
+                futureGames.remove(game);
+                game.gamePhase();
+                gamesHistory.add(game);
             }
             makeGames();
         }).start();
@@ -44,7 +46,12 @@ public class League {
     public Game getGame() {
         return game;
     }
-    public ArrayList<Game> getGames() {
-        return games;
+
+    public ArrayList<Game> getFutureGames() {
+        return futureGames;
+    }
+
+    public ArrayList<Game> getGamesHistory() {
+        return gamesHistory;
     }
 }
