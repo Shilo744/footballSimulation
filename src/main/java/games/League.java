@@ -8,10 +8,12 @@ public class League {
             "St. Louis Cardinals", "Baltimore Orioles", "Atlanta Braves", "Boston Red Sox", "Miami Marlins",
             "New York Yankees", "New York Mets"};
     private Team[] teams;
-    private ArrayList gamesHistory =new ArrayList();
+    private ArrayList gamesHistory;
     private Game game;
-    private ArrayList<Game>futureGames=new ArrayList<>();
+    private ArrayList<Game>futureGames;
     public League() {
+        gamesHistory =new ArrayList();
+        futureGames=new ArrayList<>();
        makeGames();
     }
     private void makeGames(){
