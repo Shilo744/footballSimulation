@@ -90,7 +90,17 @@ public class DbUtils {
         }
         return allUsers;
     }
-
+    public float getBalance (String username,String password) {
+        List<User> allUsers = getAllUsers();
+        float balance=0;
+        for (User user:allUsers) {
+            if(user.getUsername().equals(username) && user.getPassword().equals(password)){
+                balance= user.getBalance();
+                break;
+            }
+        }
+        return balance;
+    }
 
     /*public boolean checkCredentials (String username, String password) {
         boolean ok = false;

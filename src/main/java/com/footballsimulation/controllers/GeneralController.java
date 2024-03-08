@@ -85,4 +85,8 @@ League league=new League();
     public List<User> getUsers () {
         return dbUtils.getAllUsers();
     }
+    @RequestMapping (value = "get-balance")
+    public float getBalance (String username,String password) {
+        return dbUtils.getBalance(username,password);
+    }
 }

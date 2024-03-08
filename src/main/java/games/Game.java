@@ -11,7 +11,7 @@ public class Game {
     private static final int GOAL_CHANCE = 15;
     private static final int GAME_TIME = 30;
     private static final int MAX_MORAL_ADD=10;
-    private String winner=null;
+    private int winner=-1;
     private Team home;
     private Team guest;
     private int homeScore, guestScore;
@@ -29,7 +29,7 @@ public class Game {
     }
 
     public void gamePhase() {
-        if(winner==null) {
+        if(winner==-1) {
             currentTime = GAME_TIME;
             int homePower = home.getPower();
             int guestPower = guest.getPower();
@@ -49,12 +49,7 @@ public class Game {
             }
 
 //            printState();
-
-            switch (gameOver()) {
-                case HOME_WIN -> winner = "Home";
-                case GUEST_WIN -> winner = "Guest";
-                case TIE -> winner = "Tie";
-            }
+            winner=gameOver();
             gameOver=true;
         }
     }
@@ -100,9 +95,17 @@ public class Game {
         System.out.println(getState());
     }
     public String getWinner(){
+        String name="";
+        switch (winner) {
+            case HOME_WIN -> name = "Home";
+            case GUEST_WIN -> name = "Guest";
+            case TIE -> name = "Tie";
+        }
+        return name;
+    }
+    public int winner(){
         return winner;
     }
-
     public Team getHome() {
         return home;
     }
