@@ -56,4 +56,12 @@ public class League {
     public ArrayList<Game> getGamesHistory() {
         return gamesHistory;
     }
+    public Game getGameById(int id){
+        for (Game game : futureGames) {
+            if(game.getGameId()==id){
+                return game;
+            }
+        }
+        return null;
+    }
 }

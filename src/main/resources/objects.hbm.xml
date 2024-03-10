@@ -2,16 +2,48 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-
-
     <class name="com.footballsimulation.entities.User" table="users" lazy="false">
-        <id name="id" type="int" column="id">
+        <id name="id" type="int">
+            <column name="id"/>
             <generator class="native"/>
         </id>
-        <property name="username" type="string" column="username"/>
-        <property name="password" type="string" column="password"/>
-        <property name="email" type="string" column="email"/>
-        <property name="balance" type="float" column="balance"/>
-    </class>
+        <property name="username" type="string">
+            <column name="username"/>
+        </property>
+        <property name="password" type="string">
+            <column name="password"/>
+        </property>
+        <property name="email" type="string">
+            <column name="email"/>
+        </property>
+        <property name="balance" type="float">
+            <column name="balance"/>
+        </property>
+<!--        <bag name="goingBets" table="user_going_bets" lazy="true" cascade="all">-->
+<!--            <key column="user_id"/>-->
+<!--            <one-to-many class="com.footballsimulation.entities.Bet"/>-->
+<!--        </bag>-->
+<!--        <bag name="overBets" table="user_over_bets" lazy="true" cascade="all">-->
+<!--            <key column="user_id"/>-->
+<!--            <one-to-many class="com.footballsimulation.entities.Bet"/>-->
+<!--        </bag>-->
+<!--    </class>-->
+<!--    -->
+<!--    <class name="games.Game" table="games" lazy="false">-->
+<!--        <id name="gameId" type="int">-->
+<!--            <column name="game_id"/>-->
+<!--            <generator class="native"/>-->
+<!--        </id>-->
+<!--        &lt;!&ndash; כאן יש להוסיף מיפוי לשדות הנוספים של המשחק &ndash;&gt;-->
+<!--    </class>-->
 
+<!--    <class name="com.footballsimulation.entities.Bet" table="bets" lazy="false">-->
+<!--        <id name="betId" type="int">-->
+<!--            <column name="bet_id"/>-->
+<!--            <generator class="native"/>-->
+<!--        </id>-->
+<!--        &lt;!&ndash; כאן יש להוסיף מיפוי לשדות הנוספים של ההימור &ndash;&gt;-->
+<!--        <many-to-one name="user" class="com.footballsimulation.entities.User" column="user_id" not-null="true"/>-->
+<!--        <many-to-one name="game" class="games.Game" column="game_id" not-null="true"/>-->
+    </class>
 </hibernate-mapping>

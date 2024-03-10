@@ -90,6 +90,15 @@ public class DbUtils {
         }
         return allUsers;
     }
+
+    public User getUser (String username,String password) {
+        for (User user:getAllUsers()) {
+            if(user.getUsername().equals(username) && user.getPassword().equals(password)){
+                return user;
+            }
+        }
+        return null;
+    }
     public float getBalance (String username,String password) {
         List<User> allUsers = getAllUsers();
         float balance=0;
@@ -149,5 +158,42 @@ public class DbUtils {
 
     }
 
+    public User updateDetails(int id, String newPassword, String newEmail) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "UPDATE users SET password = ?, email = ? WHERE id = ?");
+            preparedStatement.setString(1, newPassword);
+            preparedStatement.setString(2, newEmail);
+            preparedStatement.setInt(3, id);
+            preparedStatement.executeUpdate();
+
+            return getUserById(id);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to update user details: " + e.getMessage());
+        }
+    }
+
+    public User getUserById(int id) {
+        User user = null;
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "SELECT * FROM users WHERE id = ?");
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                user = new User();
+                user.setId(resultSet.getInt("id"));
+                user.setUsername(resultSet.getString("username"));
+                user.setPassword(resultSet.getString("password"));
+                user.setEmail(resultSet.getString("email"));
+                // ניתן להוסיף עוד שדות לאובייקט User בהתאם למבנה הטבלה
+            }
+            resultSet.close();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to get user by ID: " + e.getMessage());
+        }
+        return user;
+    }
 
 }

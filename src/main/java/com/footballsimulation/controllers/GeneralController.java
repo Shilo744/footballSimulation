@@ -1,10 +1,12 @@
 package com.footballsimulation.controllers;
 
 import com.footballsimulation.Persist;
+import com.footballsimulation.entities.Bet;
 import com.footballsimulation.entities.User;
 import com.footballsimulation.responses.BasicResponse;
 import com.footballsimulation.responses.LoginResponse;
 import com.footballsimulation.utils.DbUtils;
+import games.BettingSystem;
 import games.Game;
 import games.League;
 import games.Team;
@@ -20,12 +22,23 @@ import static com.footballsimulation.utils.Errors.*;
 
 @RestController
 public class GeneralController {
-League league=new League();
-    @Autowired
-    private DbUtils dbUtils;
 
     @Autowired
-    private Persist persist;
+    public static DbUtils dbUtils;
+
+    @Autowired
+    public static Persist persist;
+
+    League league=new League();
+    BettingSystem bettingSystem;
+
+    @Autowired
+    public GeneralController(DbUtils dbUtils, Persist persist) {
+        this.dbUtils = dbUtils;
+        this.persist = persist;
+        this.bettingSystem = new BettingSystem();
+
+    }
 
 
     @RequestMapping(value = "teams")
@@ -88,5 +101,19 @@ League league=new League();
     @RequestMapping (value = "get-balance")
     public float getBalance (String username,String password) {
         return dbUtils.getBalance(username,password);
+    }
+    @RequestMapping (value = "make-bet")
+    public boolean makeBet (String username,String password,int gameId,int amount,int choice) {
+        User user=dbUtils.getUser(username,password);
+        Game game=league.getGameById(gameId);
+        if(user!=null){
+            if(game!=null){
+        return user.makeBet(game,choice,amount);
+        }
+        }
+        return false;
+    } @RequestMapping (value = "update-details")
+    public User updateDetail (int id,String password,String newEmail) {
+        return dbUtils.updateDetails(id,password,newEmail);
     }
 }

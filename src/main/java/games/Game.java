@@ -19,6 +19,8 @@ public class Game {
     private int currentTime=30;
     private int gameId;
     private boolean gameOver=false;
+    private int homePower;
+    private int guestPower;
 
     public Game(int gameId,Team home, Team guest) {
         this.home = home;
@@ -26,6 +28,44 @@ public class Game {
         this.homeScore = START_SCORE;
         this.guestScore = START_SCORE;
         this.gameId=gameId;
+        this.homePower=home.getPower();
+        this.guestPower=guest.getPower();
+    }
+    public float chances(int team){
+        switch (team){
+            case HOME_WIN -> {
+                return calculateProfit(homePower,guestPower);
+            }
+            case GUEST_WIN -> {
+                return calculateProfit(guestPower,homePower);
+            }
+            case TIE -> {
+                return calculateTieProfit(homePower,guestPower);
+            }
+        }
+        return 0;
+    }
+    public int calculateOdds(int team1, int team2) {
+        int tie = calculateTieOdds(team1, team2);
+        double chance = ((double) team1 / (team1 + team2)) * 100 * ((double) (100 - tie) / 100);
+        return (int) Math.round(chance);
+    }
+
+    public int calculateProfit(int team1, int team2) {
+        return Math.round((float) 100 / calculateOdds(team1, team2) * 100);
+    }
+
+    public int calculateTieOdds(int team1, int team2) {
+        int totalPower = team1 + team2;
+        double change = 35 - (100.0 / totalPower) * Math.abs(team1 - team2);
+        if (change <= 0) {
+            return 1;
+        }
+        return (int) Math.round(change);
+    }
+
+    public int calculateTieProfit(int team1, int team2) {
+        return Math.round((float) 100 / calculateTieOdds(team1, team2) * 100);
     }
 
     public void gamePhase() {

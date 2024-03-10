@@ -47,6 +47,21 @@ public class Persist {
     public <T> List<T> loadList(Class<T> clazz) {
         return  this.sessionFactory.getCurrentSession().createQuery("FROM User").list();
     }
+    public void updateBalance(User user, float amount) {
+        float newBalance = user.getBalance() + amount;
+        user.setBalance(newBalance);
+        save(user);
+    }
+    public void updateBalanceById(int userId, float amount) {
+        User user = loadObject(User.class, userId);
+        if (user != null) {
+            float newBalance = user.getBalance() + amount;
+            user.setBalance(newBalance);
+            save(user);
+        } else {
+            LOGGER.error("User with ID {} not found", userId);
+        }
+    }
 
 
     public User login (String username, String password) {
