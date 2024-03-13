@@ -67,7 +67,7 @@ public class Game {
     public int calculateTieOdds(int team1, int team2) {
         int totalPower = team1 + team2;
         double change = 35 - (100.0 / totalPower) * Math.abs(team1 - team2);
-        if (change <= 0) {
+        if (change <= 1) {
             return 1;
         }
         return (int) Math.round(change);
