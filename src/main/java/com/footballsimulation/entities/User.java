@@ -13,13 +13,13 @@ public class User {
     private float balance;
     private String email;
 
-    private ArrayList<Bet>goingBets;
-    private ArrayList<Bet>overBets;
+    private static ArrayList<Bet>goingBets;
+    private static ArrayList<Bet>overBets;
 
     public boolean makeBet(Game game,int choice,int amount){
         if(amount<=balance && choice>=Game.HOME_WIN && choice<=Game.TIE){
         GeneralController.persist.updateBalanceById(id,-amount);
-    addBet(new Bet(game,choice,amount));
+    addBet(new Bet(id,game,choice,amount));
     return true;
         }
         return false;
@@ -31,17 +31,17 @@ public class User {
         return email;
     }
 
-    public ArrayList<Bet> getGoingBets() {
+    public static ArrayList<Bet> getGoingBets() {
         return goingBets;
     }
     public void addMoney(float amount){
         GeneralController.persist.updateBalanceById(id,amount);
     }
-    public void setGoingBets(ArrayList<Bet> goingBets) {
-        this.goingBets = goingBets;
+    public static void setGoingBets(ArrayList<Bet> newGoingBets) {
+        goingBets = newGoingBets;
     }
 
-    public ArrayList<Bet> getOverBets() {
+    public static ArrayList<Bet> getOverBets() {
         return overBets;
     }
 

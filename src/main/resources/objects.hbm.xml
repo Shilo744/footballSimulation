@@ -28,7 +28,7 @@
 <!--            <one-to-many class="com.footballsimulation.entities.Bet"/>-->
 <!--        </bag>-->
 <!--    </class>-->
-<!--    -->
+
 <!--    <class name="games.Game" table="games" lazy="false">-->
 <!--        <id name="gameId" type="int">-->
 <!--            <column name="game_id"/>-->

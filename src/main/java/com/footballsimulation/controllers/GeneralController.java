@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.footballsimulation.utils.Errors.*;
@@ -57,13 +58,8 @@ public class GeneralController {
     public ArrayList<Game> games () {
         return league.getGamesHistory();
     }
-    @RequestMapping(value = "/", method = {RequestMethod.GET, RequestMethod.POST})
-    public Object test () {
-        return "Hello From Server";
-    }
 
-
-    @RequestMapping (value = "/login", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping (value = "login", method = {RequestMethod.GET, RequestMethod.POST})
     public BasicResponse login (String username, String password) {
         BasicResponse basicResponse = null;
         boolean success = false;
@@ -88,8 +84,8 @@ public class GeneralController {
         return basicResponse;
     }
 
-    @RequestMapping (value = "add-user")
-    public boolean addUser (String username, String password, String email) {
+    @RequestMapping (value = "register")
+    public BasicResponse register(String username, String password, String email) {
         User userToAdd = new User(username, password,email);
         return dbUtils.addUser(userToAdd);
     }
@@ -101,19 +97,50 @@ public class GeneralController {
     @RequestMapping (value = "get-balance")
     public float getBalance (String username,String password) {
         return dbUtils.getBalance(username,password);
+
+    }@RequestMapping (value = "get-active-bets")
+    public LinkedList<Bet> getActiveBet (String username, String password) {
+        LinkedList<Bet>bets=new LinkedList<>();
+        for (Bet bet:BettingSystem.getGoingBets()) {
+            if(bet.getUserId()==dbUtils.getUser(username,password).getId()){
+                bets.add(bet);
+            }
+        }
+        return bets;
+    }
+
+@RequestMapping (value = "get-over-bets")
+public LinkedList<Bet> getOverBet (String username, String password) {
+        LinkedList<Bet>bets=new LinkedList<>();
+        for (Bet bet:BettingSystem.getOverBets()) {
+            if(bet.getUserId()==dbUtils.getUser(username,password).getId()){
+                bets.add(bet);
+            }
+        }
+        return bets;
     }
     @RequestMapping (value = "make-bet")
     public boolean makeBet (String username,String password,int gameId,int amount,int choice) {
+        if(amount>0){
         User user=dbUtils.getUser(username,password);
         Game game=league.getGameById(gameId);
         if(user!=null){
             if(game!=null){
-        return user.makeBet(game,choice,amount);
+                if(amount<=user.getBalance()){
+        return bettingSystem.makeBet(user.getId(),game,choice,amount);
+                }
+        }
         }
         }
         return false;
-    } @RequestMapping (value = "update-details")
+    }
+    @RequestMapping (value = "update-details")
     public User updateDetail (int id,String password,String newEmail) {
         return dbUtils.updateDetails(id,password,newEmail);
+    }
+    @RequestMapping (value = "update-mail")
+    public boolean updateMail (String username,String password,String newMail) {
+
+        return true;
     }
 }

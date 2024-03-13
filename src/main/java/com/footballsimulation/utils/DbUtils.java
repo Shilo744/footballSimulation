@@ -2,6 +2,7 @@ package com.footballsimulation.utils;
 
 
 import com.footballsimulation.entities.User;
+import com.footballsimulation.responses.BasicResponse;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -50,10 +51,40 @@ public class DbUtils {
         }
         return true;
     }
+    public boolean weakPassword(String password){
+        return password.length()<4;
+    }
+    public boolean isValidEmail(String email) {
+        // בדיקה שהמייל מכיל את התווים '@' ו'.'
+        if (email.contains("@") && email.contains(".")) {
+            // בדיקת תווים חוקיים במייל
+            for (int i = 0; i < email.length(); i++) {
+                if(email.charAt(i)<'.' || email.charAt(i)>'z'){
+                    return false;
+                }
+            }
+            // בדיקה על סיום המייל ב'.com' או '.co.il'
+            String[] parts = email.split("@");
+            String domain = parts[1];
+            if (domain.endsWith(".com") || domain.endsWith(".co.il")) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-    public boolean addUser (User user) {
+    public BasicResponse addUser (User user) {
+        BasicResponse basicResponse;
         boolean success = false;
+        Integer errorCode=null;
         boolean check=checkIfUsernameAvailable(user.getUsername());
+        if(!check){
+            errorCode=Errors.ERROR_SIGN_UP_USERNAME_TAKEN;
+        }else if(weakPassword(user.getPassword())){
+            errorCode=Errors.WEAK_PASSWORD;
+        }else if(!isValidEmail(user.getEmail())){
+            errorCode=Errors.WRONG_MAIL;
+        }else {
         try {
             if (check) {
                 PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO users (username, password, email, balance) VALUES ( ? , ? , ? , ?)");
@@ -67,7 +98,9 @@ public class DbUtils {
         }catch (SQLException e){
             e.printStackTrace();
         }
-        return success;
+    }
+        basicResponse=new BasicResponse(success,errorCode);
+        return basicResponse;
     }
 
     public List<User> getAllUsers () {
@@ -157,6 +190,24 @@ public class DbUtils {
         return user;
 
     }
+    public Integer getIdByUsername(String username,String password) {
+        Integer id = null; // או ערך כלשהו שמייצג שאין ID
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?");
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                id = resultSet.getInt("id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return id;
+    }
+
 
     public User updateDetails(int id, String newPassword, String newEmail) {
         try {

@@ -18,7 +18,7 @@ public class Game {
     private final byte START_SCORE = 0;
     private int currentTime=30;
     private int gameId;
-    private boolean gameOver=false;
+    private boolean gameOver;
     private int homePower;
     private int guestPower;
 
@@ -30,7 +30,16 @@ public class Game {
         this.gameId=gameId;
         this.homePower=home.getPower();
         this.guestPower=guest.getPower();
+        this.gameOver=false;
     }
+
+    public Game() {
+
+    }
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
+    }
+
     public float chances(int team){
         switch (team){
             case HOME_WIN -> {

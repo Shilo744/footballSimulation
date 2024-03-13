@@ -1,4 +1,5 @@
 package com.footballsimulation;
+import com.footballsimulation.controllers.GeneralController;
 import com.footballsimulation.entities.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -24,9 +25,6 @@ public class Persist {
 
     private static final String EMAIL_REGEX =
             "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-
-
-
     @Autowired
     public Persist(SessionFactory sf) {
         this.sessionFactory = sf;
@@ -62,15 +60,29 @@ public class Persist {
             LOGGER.error("User with ID {} not found", userId);
         }
     }
+    public boolean updateMail(int userId, String mail) {
+        User user = loadObject(User.class, userId);
+        if (user != null) {
+            if(GeneralController.dbUtils.isValidEmail(mail)){
+            user.setEmail(mail);
+            save(user);
+            return true;
+            }
+        } else {
+            LOGGER.error("User with ID {} not found", userId);
+        }
+        return false;
+    }
 
 
     public User login (String username, String password) {
-        return (User) this.sessionFactory.getCurrentSession()
+        User user =(User) this.sessionFactory.getCurrentSession()
                 .createQuery("FROM User WHERE username = :username " +
                         "AND password = :password ")
                 .setParameter("username", username)
                 .setParameter("password", password)
                 .uniqueResult();
+        return user;
     }
 
     public User register (String username, String password, String email) {

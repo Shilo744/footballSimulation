@@ -7,23 +7,32 @@ public class Bet {
     private int choice;
     private int bettingAmount;
     private boolean win;
-    private User user;
+    private int userId;
+    public Bet() {
 
-    public User getUser() {
-        return user;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public int getUserId() {
+        return userId;
     }
 
-    public Bet(Game game, int choice, int bettingAmount) {
+    public void setWin(boolean win) {
+        this.win = win;
+    }
+
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public Bet(int userId,Game game, int choice, int bettingAmount) {
         this.game = game;
         this.choice = choice;
         this.bettingAmount = bettingAmount;
+        this.userId =userId;
     }
 
-    public int reward(){
+    public int getReward(){
         float multiple=0;
         if(win){
             switch (choice){
@@ -69,5 +78,16 @@ public class Bet {
     }
     public boolean isWin(){
         return win;
+    }
+
+    @Override
+    public String toString() {
+        return "Bet{" +
+                "game=" + game +
+                ", choice=" + choice +
+                ", bettingAmount=" + bettingAmount +
+                ", win=" + win +
+                ", userId=" + userId +
+                '}';
     }
 }
