@@ -1,22 +1,24 @@
 package com.footballsimulation.responses;
 
-public class LoginResponse extends BasicResponse {
-    private int id;
+import com.footballsimulation.entities.User;
 
-    public LoginResponse(boolean success, Integer errorCode, int id) {
+public class LoginResponse extends BasicResponse {
+    private User user;
+
+    public LoginResponse(boolean success, Integer errorCode, User user) {
         super(success, errorCode);
-        this.id = id;
+        this.user = user;
     }
 
     public LoginResponse(boolean success, Integer errorCode) {
         super(success, errorCode);
     }
 
-    public int getId() {
-        return id;
+    public User getUser() {
+        return user;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUser(User user) {
+        this.user = user;
     }
 }

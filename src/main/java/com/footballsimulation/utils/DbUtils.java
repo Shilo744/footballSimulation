@@ -238,6 +238,7 @@ public class DbUtils {
                 user.setUsername(resultSet.getString("username"));
                 user.setPassword(resultSet.getString("password"));
                 user.setEmail(resultSet.getString("email"));
+                user.setBalance(resultSet.getFloat("balance"));
                 // ניתן להוסיף עוד שדות לאובייקט User בהתאם למבנה הטבלה
             }
             resultSet.close();

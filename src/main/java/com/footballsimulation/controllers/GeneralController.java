@@ -68,7 +68,7 @@ public class GeneralController {
             if (password != null && password.length() > 0) {
                 User user = persist.login(username, password);
                 if (user != null) {
-                    basicResponse = new LoginResponse(true, errorCode, user.getId());
+                    basicResponse = new LoginResponse(true, errorCode, user);
                 } else {
                     errorCode = ERROR_LOGIN_WRONG_CREDS;
                 }

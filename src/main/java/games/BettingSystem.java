@@ -34,7 +34,6 @@ public class BettingSystem {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-                System.out.println(goingBets.size()+" going bets before: "+goingBets);
 
                 this.users = GeneralController.dbUtils.getAllUsers();
 
@@ -45,7 +44,6 @@ public class BettingSystem {
                         overBets.add(currentBetCheck);
                         if(currentBetCheck.isWin()){
                             int reward=currentBetCheck.getReward();
-                            System.out.println(reward);
                             GeneralController.persist.updateBalanceById(currentBetCheck.getUserId(),reward);
                         }
                     }else {
@@ -54,7 +52,6 @@ public class BettingSystem {
             }
                 goingBets=newBets;
 
-                System.out.println(goingBets.size()+" going bets after: "+goingBets);
             }
         }).start();
     }
